@@ -20,10 +20,5 @@
 !/BackToTheRoots/plotting_utils.py
 !/BackToTheRoots/BDT_utils.py
 !/BackToTheRoots/README.md
+!/BackToTheRoots/PRETRAINING.md
 !/BackToTheRoots/classifier4.yml
-
-# Exclude oversized files (>100MB, not used by pretraining_analysis.ipynb)
-/BackToTheRoots/results/IAD_BDT_10G/fpr_roc_classifier.npy
-/BackToTheRoots/results/IAD_BDT_10G/tpr_roc_classifier.npy
-/BackToTheRoots/results/IAD_NN_10G/fpr_roc_NN.npy
-/BackToTheRoots/results/IAD_NN_10G/tpr_roc_NN.npy
