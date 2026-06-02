@@ -1,0 +1,15 @@
+activation: 'relu'
+hidden: 3
+lr: 1e-3
+dropout: 0
+l1: 0
+l2: 0
+scarf_ssl_rate: 0.5
+scarf_ssl_epochs: 50
+scarf_ssl_lr: 1e-3
+scarf_ssl_temp: 0.5
+scarf_ssl_proj_dim: 64
+beta_1: 0.9
+label_smoothing: 0
+batchsize: 128
+epochs: 100

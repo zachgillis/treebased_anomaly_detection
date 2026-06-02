@@ -40,6 +40,11 @@ parser.add_argument('--N_CR', type=int, default=None)
 parser.add_argument('--N_bkg', type=int, default=None)
 parser.add_argument('--signal_significance', type=float, default=None, help="Takes highest priority, only supported for 2D_scan")
 
+#Pretraining
+parser.add_argument('--pretrain_strategy', type=str, default=None, help="Pretraining strategy name (e.g. ref_vs_ref, supervised)")
+parser.add_argument('--ft_lr', type=float, default=None, help="Fine-tuning learning rate; defaults to training lr")
+parser.add_argument('--bottleneck', type=int, default=None, help="AE bottleneck dim; overrides yaml/default (max(2,n//4))")
+
 #General classifier Arguments
 parser.add_argument('--N_runs', type=int, default=10)
 parser.add_argument('--ensemble_over', default=50, type=int)
@@ -98,11 +103,14 @@ if not args.scan_2D:
         print("Classifier run no. ", i)
         print()
         args.set_seed = i
-        if args.classifier=="NN": 
+        if args.classifier=="NN":
             direc_run = args.directory+"run"+str(i)+"/"
             if args.randomize_seed and i%args.ensemble_over==0:
                 X_train, Y_train, X_test, Y_test = dp.classifier_data_prep(args)
-            NN.classifier_training(X_train, Y_train, X_test, Y_test, args, i, direc_run=direc_run)
+            if args.pretrain_strategy:
+                NN.classifier_training_pretrained(X_train, Y_train, X_test, Y_test, args, i, direc_run=direc_run, ft_lr=args.ft_lr)
+            else:
+                NN.classifier_training(X_train, Y_train, X_test, Y_test, args, i, direc_run=direc_run)
         else:
             if args.randomize_seed:
                 X_train, Y_train, X_test, Y_test = dp.classifier_data_prep(args)

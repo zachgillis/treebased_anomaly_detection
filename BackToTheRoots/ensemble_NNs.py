@@ -58,9 +58,8 @@ def make_ROCs(folder, Y_test=None):
         print(length)
     else:
         length=0
-        while os.path.exists(folder+"run"+str(length)+"/"):
+        while os.path.exists(folder+"run"+str(length)+"/preds.npy"):
             length+=1
-        #length-=1
         print(length)
         
         preds = np.zeros((length, len(Y_test)))

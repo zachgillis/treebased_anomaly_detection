@@ -4,13 +4,17 @@ import pandas as pd
 import warnings
 import psutil
 
-def shuffle_XY(X,Y):
-    seed_int=np.random.randint(300)
+def shuffle_XY(X, Y, Z=None):
+    seed_int = np.random.randint(300)
     np.random.seed(seed_int)
     np.random.shuffle(X)
     np.random.seed(seed_int)
     np.random.shuffle(Y)
-    return X,Y
+    if Z is not None:
+        np.random.seed(seed_int)
+        np.random.shuffle(Z)
+        return X, Y, Z
+    return X, Y
 
 def to_categorical(Y, N_classes):
 	Y=np.array(Y,dtype=int)
@@ -258,8 +262,9 @@ def classifier_data_prep(args, samples=None):
             print(X_train.shape)
         else:
             X_train = np.concatenate((innerdata[:120000,1:args.inputs+1],samples_train[:,1:args.inputs+1]),axis=0)
-        Y_train = np.concatenate((np.ones(len(X_train)-len(samples_train)),np.zeros(len(samples_train))),axis=0)		
-    else: 
+        Y_train = np.concatenate((np.ones(len(X_train)-len(samples_train)),np.zeros(len(samples_train))),axis=0)
+        Y_true = np.concatenate((innerdata[:120000,-1], np.zeros(len(samples_train))),axis=0)
+    else:
         raise ValueError('Wrong --args.mode given')
 
     X_test = np.concatenate((extrabkg2,inner_extra_sig[:20000],extrabkg1[:40000]))
@@ -270,7 +275,11 @@ def classifier_data_prep(args, samples=None):
     else:
         X_test = X_test[:,1:args.inputs+1]
 
-    X_train, Y_train = shuffle_XY(X_train, to_categorical(Y_train,2))
+    if args.mode == "IAD":
+        X_train, Y_train, Y_true = shuffle_XY(X_train, to_categorical(Y_train, 2), Y_true)
+        np.save(args.directory + "Y_train_true.npy", Y_true)
+    else:
+        X_train, Y_train = shuffle_XY(X_train, to_categorical(Y_train, 2))
 
     if args.cl_norm:
         if args.cl_logit:
